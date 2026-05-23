@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
-import { base44 } from '@/api/base44Client';
+import { client } from '@/api/client';
 import { useQuery } from '@tanstack/react-query';
 
 export default function GMDashboard() {
@@ -8,19 +8,19 @@ export default function GMDashboard() {
 
   const { data: characters = [] } = useQuery({
     queryKey: ['all-characters'],
-    queryFn: () => base44.entities.Character.list(),
+    queryFn: () => client.entities.Character.list(),
     refetchInterval: 15000,
   });
 
   const { data: pendingReqs = [] } = useQuery({
     queryKey: ['pending-requests'],
-    queryFn: () => base44.entities.Request.filter({ status: 'pending' }),
+    queryFn: () => client.entities.Request.filter({ status: 'pending' }),
     refetchInterval: 15000,
   });
 
   const { data: worldStates = [] } = useQuery({
     queryKey: ['world-state'],
-    queryFn: () => base44.entities.WorldState.list(),
+    queryFn: () => client.entities.WorldState.list(),
     refetchInterval: 10000,
   });
 

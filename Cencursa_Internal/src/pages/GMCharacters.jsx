@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
-import { base44 } from '@/api/base44Client';
+import { client } from '@/api/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import StatusBadge from '@/components/ui/StatusBadge';
 
@@ -22,29 +22,29 @@ export default function GMCharacters() {
 
   const { data: characters = [] } = useQuery({
     queryKey: ['all-characters'],
-    queryFn: () => base44.entities.Character.list(),
+    queryFn: () => client.entities.Character.list(),
   });
 
   const { data: statuses = [] } = useQuery({
     queryKey: ['char-statuses', selected?.id],
-    queryFn: () => base44.entities.StatusEffect.filter({ character_id: selected.id }),
+    queryFn: () => client.entities.StatusEffect.filter({ character_id: selected.id }),
     enabled: !!selected?.id,
   });
 
   const { data: items = [] } = useQuery({
     queryKey: ['char-items', selected?.id],
-    queryFn: () => base44.entities.InventoryItem.filter({ character_id: selected.id }),
+    queryFn: () => client.entities.InventoryItem.filter({ character_id: selected.id }),
     enabled: !!selected?.id,
   });
 
   const { data: powers = [] } = useQuery({
     queryKey: ['char-powers', selected?.id],
-    queryFn: () => base44.entities.Power.filter({ character_id: selected.id }),
+    queryFn: () => client.entities.Power.filter({ character_id: selected.id }),
     enabled: !!selected?.id,
   });
 
   const updateChar = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.Character.update(id, data),
+    mutationFn: ({ id, data }) => client.entities.Character.update(id, data),
     onSuccess: (updated) => {
       qc.invalidateQueries(['all-characters']);
       setSelected(updated);
@@ -52,37 +52,37 @@ export default function GMCharacters() {
   });
 
   const createChar = useMutation({
-    mutationFn: data => base44.entities.Character.create(data),
+    mutationFn: data => client.entities.Character.create(data),
     onSuccess: () => { qc.invalidateQueries(['all-characters']); setShowNewChar(false); },
   });
 
   const createStatus = useMutation({
-    mutationFn: data => base44.entities.StatusEffect.create(data),
+    mutationFn: data => client.entities.StatusEffect.create(data),
     onSuccess: () => { qc.invalidateQueries(['char-statuses', selected?.id]); setStatusForm({ type:'fear', description:'', duration:'', intensity:'mild' }); },
   });
 
   const deleteStatus = useMutation({
-    mutationFn: id => base44.entities.StatusEffect.delete(id),
+    mutationFn: id => client.entities.StatusEffect.delete(id),
     onSuccess: () => qc.invalidateQueries(['char-statuses', selected?.id]),
   });
 
   const createItem = useMutation({
-    mutationFn: data => base44.entities.InventoryItem.create(data),
+    mutationFn: data => client.entities.InventoryItem.create(data),
     onSuccess: () => { qc.invalidateQueries(['char-items', selected?.id]); setItemForm({ name:'', category:'misc', rarity:'common', description:'', effects:'', origin:'' }); },
   });
 
   const deleteItem = useMutation({
-    mutationFn: id => base44.entities.InventoryItem.delete(id),
+    mutationFn: id => client.entities.InventoryItem.delete(id),
     onSuccess: () => qc.invalidateQueries(['char-items', selected?.id]),
   });
 
   const createPower = useMutation({
-    mutationFn: data => base44.entities.Power.create(data),
+    mutationFn: data => client.entities.Power.create(data),
     onSuccess: () => { qc.invalidateQueries(['char-powers', selected?.id]); setPowerForm({ name:'', description:'', sanity_cost:0, psychological_effects:'', origin_trauma:'' }); },
   });
 
   const logEvent = async (type, message, value) => {
-    await base44.entities.EventLog.create({ character_id: selected.id, character_name: selected.name, type, message, value: value || 0 });
+    await client.entities.EventLog.create({ character_id: selected.id, character_name: selected.name, type, message, value: value || 0 });
   };
 
   const handleUpdate = async (field, val) => {

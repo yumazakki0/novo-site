@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
-import { base44 } from '@/api/base44Client';
+import { client } from '@/api/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 const TYPE_LABELS = { item_use:'USO DE ITEM', rest:'DESCANSO', trade:'TROCA', special_action:'AÇÃO ESPECIAL' };
@@ -13,18 +13,18 @@ export default function GMRequests() {
 
   const { data: requests = [] } = useQuery({
     queryKey: ['all-requests'],
-    queryFn: () => base44.entities.Request.list('-created_date', 50),
+    queryFn: () => client.entities.Request.list('-created_date', 50),
     refetchInterval: 15000,
   });
 
   const updateReq = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.Request.update(id, data),
+    mutationFn: ({ id, data }) => client.entities.Request.update(id, data),
     onSuccess: async (updated) => {
       qc.invalidateQueries(['all-requests']);
       qc.invalidateQueries(['pending-requests']);
       setResponding(null);
       setResponseText('');
-      await base44.entities.EventLog.create({
+      await client.entities.EventLog.create({
         character_id: updated.character_id,
         character_name: updated.character_name,
         type: 'request_response',

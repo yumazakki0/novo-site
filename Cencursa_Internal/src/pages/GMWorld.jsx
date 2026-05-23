@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
-import { base44 } from '@/api/base44Client';
+import { client } from '@/api/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 const WEATHER_OPTIONS = [
@@ -18,19 +18,19 @@ export default function GMWorld() {
 
   const { data: worldStates = [] } = useQuery({
     queryKey: ['world-state'],
-    queryFn: () => base44.entities.WorldState.list(),
+    queryFn: () => client.entities.WorldState.list(),
     refetchInterval: 10000,
   });
 
   const worldState = worldStates[0];
 
   const createWorld = useMutation({
-    mutationFn: data => base44.entities.WorldState.create(data),
+    mutationFn: data => client.entities.WorldState.create(data),
     onSuccess: () => qc.invalidateQueries(['world-state']),
   });
 
   const updateWorld = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.WorldState.update(id, data),
+    mutationFn: ({ id, data }) => client.entities.WorldState.update(id, data),
     onSuccess: () => qc.invalidateQueries(['world-state']),
   });
 
@@ -45,7 +45,7 @@ export default function GMWorld() {
   const sendAlert = async (msg) => {
     if (!msg.trim()) return;
     await handleUpdate({ global_alert: msg, global_alert_active: true });
-    await base44.entities.EventLog.create({
+    await client.entities.EventLog.create({
       type: 'alert', message: `ALERTA GLOBAL: ${msg}`, is_global: true,
     });
   };
@@ -53,7 +53,7 @@ export default function GMWorld() {
   const sendSystemMsg = async (msg) => {
     if (!msg.trim()) return;
     await handleUpdate({ system_message: msg, system_message_active: true });
-    await base44.entities.EventLog.create({
+    await client.entities.EventLog.create({
       type: 'system', message: `MENSAGEM DO SISTEMA: ${msg}`, is_global: true,
     });
   };
@@ -209,7 +209,7 @@ export default function GMWorld() {
               onClick={async () => {
                 if (!eventInput.trim()) return;
                 await handleUpdate({ world_event: eventInput, world_event_active: true });
-                await base44.entities.EventLog.create({ type: 'encounter', message: `EVENTO: ${eventInput}`, is_global: true });
+                await client.entities.EventLog.create({ type: 'encounter', message: `EVENTO: ${eventInput}`, is_global: true });
                 setEventInput('');
               }}
               className="btn-cencursa rounded-sm shrink-0"

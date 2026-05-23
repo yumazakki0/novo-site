@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { client } from '@/api/client';
 import CencursaCard from '@/components/ui/CencursaCard';
 import { useState } from 'react';
 
@@ -11,16 +11,16 @@ export default function GMRequests() {
 
   const { data: requests, isLoading } = useQuery({
     queryKey: ['allRequests'],
-    queryFn: () => base44.entities.Request.list('-created_date'),
+    queryFn: () => client.entities.Request.list('-created_date'),
     refetchInterval: 10000,
   });
 
   const logEvent = useMutation({
-    mutationFn: data => base44.entities.EventLog.create(data),
+    mutationFn: data => client.entities.EventLog.create(data),
   });
 
   const updateRequest = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.Request.update(id, data),
+    mutationFn: ({ id, data }) => client.entities.Request.update(id, data),
     onSuccess: (_, vars) => {
       qc.invalidateQueries({ queryKey: ['allRequests'] });
       if (vars.data.status === 'approved' || vars.data.status === 'denied') {

@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { client } from '@/api/client';
 import { useAuth } from '@/lib/AuthContext';
 import CencursaCard from '@/components/ui/CencursaCard';
 import { useState } from 'react';
@@ -21,14 +21,14 @@ export default function Documents() {
 
   const { data: characters } = useQuery({
     queryKey: ['myCharacter', user?.email],
-    queryFn: () => base44.entities.Character.filter({ player_email: user?.email }),
+    queryFn: () => client.entities.Character.filter({ player_email: user?.email }),
     enabled: !!user?.email,
   });
   const character = characters?.[0];
 
   const { data: allDocs } = useQuery({
     queryKey: ['documents'],
-    queryFn: () => base44.entities.Document.list(),
+    queryFn: () => client.entities.Document.list(),
     enabled: !!character?.id,
   });
 

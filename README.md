@@ -1,39 +1,33 @@
-**Welcome to your Base44 project** 
+**Welcome to your Cencursa project** 
 
 **About**
 
-View and Edit  your app on [Base44.com](http://Base44.com) 
+View and edit your app locally without external service dependency.
 
-This project contains everything you need to run your app locally.
+This project contains everything you need to run the app in a native browser environment.
 
 **Edit the code in your local development environment**
 
-Any change pushed to the repo will also be reflected in the Base44 Builder.
+Any change pushed to the repo will update the application source.
 
 **Prerequisites:** 
 
 1. Clone the repository using the project's Git URL 
 2. Navigate to the project directory
 3. Install dependencies: `npm install`
-4. Create an `.env.local` file and set the right environment variables
+4. Create an `.env.local` file if you need to override app settings
 
 ```
-VITE_BASE44_APP_ID=your_app_id
-VITE_BASE44_APP_BASE_URL=your_backend_url
-
-e.g.
-VITE_BASE44_APP_ID=cbef744a8545c389ef439ea6
-VITE_BASE44_APP_BASE_URL=https://my-to-do-list-81bfaad7.base44.app
+VITE_APP_ID=your_app_id
+VITE_APP_BASE_URL=your_backend_url
 ```
 
 Run the app: `npm run dev`
 
 **Publish your changes**
 
-Open [Base44.com](http://Base44.com) and click on Publish.
+Deploy the application to your preferred hosting environment.
 
 **Docs & Support**
 
-Documentation: [https://docs.base44.com/Integrations/Using-GitHub](https://docs.base44.com/Integrations/Using-GitHub)
-
-Support: [https://app.base44.com/support](https://app.base44.com/support)
+Development docs: follow your local project conventions and tooling.

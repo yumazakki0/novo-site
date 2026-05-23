@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { client } from '@/api/client';
 import { useAuth } from '@/lib/AuthContext';
 import CencursaCard from '@/components/ui/CencursaCard';
 import { useState } from 'react';
@@ -24,7 +24,7 @@ export default function EventLogs() {
 
   const { data: characters } = useQuery({
     queryKey: ['myCharacter', user?.email],
-    queryFn: () => base44.entities.Character.filter({ player_email: user?.email }),
+    queryFn: () => client.entities.Character.filter({ player_email: user?.email }),
     enabled: !!user?.email,
   });
   const character = characters?.[0];
@@ -33,9 +33,9 @@ export default function EventLogs() {
     queryKey: ['allLogs', character?.id],
     queryFn: async () => {
       const personal = character?.id
-        ? await base44.entities.EventLog.filter({ character_id: character.id }, '-created_date', 50)
+        ? await client.entities.EventLog.filter({ character_id: character.id }, '-created_date', 50)
         : [];
-      const global = await base44.entities.EventLog.filter({ is_global: true }, '-created_date', 20);
+      const global = await client.entities.EventLog.filter({ is_global: true }, '-created_date', 20);
       const all = [...personal, ...global].filter((v, i, a) => a.findIndex(x => x.id === v.id) === i);
       return all.sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
     },

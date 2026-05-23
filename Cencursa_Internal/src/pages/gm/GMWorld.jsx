@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { client } from '@/api/client';
 import CencursaCard from '@/components/ui/CencursaCard';
 
 const WEATHER_ICONS = { rain: '🌧', fog: '🌫', storm: '⛈', clear: '◎', blizzard: '❄', ash: '🌑' };
@@ -17,14 +17,14 @@ export default function GMWorld() {
 
   const { data: worldArr } = useQuery({
     queryKey: ['worldState'],
-    queryFn: () => base44.entities.WorldState.list(),
+    queryFn: () => client.entities.WorldState.list(),
   });
   const world = worldArr?.[0];
 
   const updateWorld = useMutation({
     mutationFn: async (data) => {
-      if (world?.id) return base44.entities.WorldState.update(world.id, data);
-      return base44.entities.WorldState.create(data);
+      if (world?.id) return client.entities.WorldState.update(world.id, data);
+      return client.entities.WorldState.create(data);
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ['worldState'] }),
   });

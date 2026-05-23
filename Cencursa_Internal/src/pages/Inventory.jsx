@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
-import { base44 } from '@/api/base44Client';
+import { client } from '@/api/client';
 import { useQuery } from '@tanstack/react-query';
 
 const CATEGORY_LABELS = {
@@ -25,7 +25,7 @@ export default function Inventory() {
 
   const { data: items = [] } = useQuery({
     queryKey: ['inventory', character?.id],
-    queryFn: () => base44.entities.InventoryItem.filter({ character_id: character.id }),
+    queryFn: () => client.entities.InventoryItem.filter({ character_id: character.id }),
     enabled: !!character?.id,
     refetchInterval: 15000,
   });

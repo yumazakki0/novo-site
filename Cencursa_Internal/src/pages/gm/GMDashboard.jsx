@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { client } from '@/api/client';
 import CencursaCard from '@/components/ui/CencursaCard';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -14,35 +14,35 @@ export default function GMDashboard() {
 
   const { data: worldArr } = useQuery({
     queryKey: ['worldState'],
-    queryFn: () => base44.entities.WorldState.list(),
+    queryFn: () => client.entities.WorldState.list(),
     refetchInterval: 8000,
   });
   const world = worldArr?.[0];
 
   const { data: characters } = useQuery({
     queryKey: ['allCharacters'],
-    queryFn: () => base44.entities.Character.list(),
+    queryFn: () => client.entities.Character.list(),
   });
 
   const { data: pendingRequests } = useQuery({
     queryKey: ['pendingRequests'],
-    queryFn: () => base44.entities.Request.filter({ status: 'pending' }),
+    queryFn: () => client.entities.Request.filter({ status: 'pending' }),
     refetchInterval: 15000,
   });
 
   const updateWorld = useMutation({
     mutationFn: async (data) => {
       if (world?.id) {
-        return base44.entities.WorldState.update(world.id, data);
+        return client.entities.WorldState.update(world.id, data);
       } else {
-        return base44.entities.WorldState.create(data);
+        return client.entities.WorldState.create(data);
       }
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ['worldState'] }),
   });
 
   const logEvent = useMutation({
-    mutationFn: data => base44.entities.EventLog.create(data),
+    mutationFn: data => client.entities.EventLog.create(data),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['allLogs'] }),
   });
 

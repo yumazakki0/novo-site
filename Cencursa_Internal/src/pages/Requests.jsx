@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { client } from '@/api/client';
 import { useAuth } from '@/lib/AuthContext';
 import CencursaCard from '@/components/ui/CencursaCard';
 import { useState } from 'react';
@@ -21,19 +21,19 @@ export default function Requests() {
 
   const { data: characters } = useQuery({
     queryKey: ['myCharacter', user?.email],
-    queryFn: () => base44.entities.Character.filter({ player_email: user?.email }),
+    queryFn: () => client.entities.Character.filter({ player_email: user?.email }),
     enabled: !!user?.email,
   });
   const character = characters?.[0];
 
   const { data: requests } = useQuery({
     queryKey: ['myRequests', character?.id],
-    queryFn: () => base44.entities.Request.filter({ character_id: character.id }, '-created_date'),
+    queryFn: () => client.entities.Request.filter({ character_id: character.id }, '-created_date'),
     enabled: !!character?.id,
   });
 
   const createRequest = useMutation({
-    mutationFn: data => base44.entities.Request.create(data),
+    mutationFn: data => client.entities.Request.create(data),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['myRequests'] });
       setForm({ type: 'special_action', description: '' });

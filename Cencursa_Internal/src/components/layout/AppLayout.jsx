@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation, Outlet } from 'react-router-dom';
-import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '@/lib/AuthContext';
+import { client } from '@/api/client';
 import SanityAtmosphere from './SanityAtmosphere';
 
 const NAV_PLAYER = [
@@ -28,13 +28,13 @@ const WEATHER_ICONS = { rain: '🌧', fog: '🌫', storm: '⛈', clear: '◎', b
 
 export default function AppLayout({ isGM }) {
   const location = useLocation();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [time, setTime] = useState(new Date());
 
   const { data: worldState } = useQuery({
     queryKey: ['worldState'],
-    queryFn: () => base44.entities.WorldState.list(),
+    queryFn: () => client.entities.WorldState.list(),
     select: d => d[0],
     refetchInterval: 8000,
   });
@@ -42,7 +42,7 @@ export default function AppLayout({ isGM }) {
   // Fetch player's character for sanity atmosphere (only for players)
   const { data: myCharacter } = useQuery({
     queryKey: ['myCharacter', user?.email],
-    queryFn: () => base44.entities.Character.filter({ player_email: user?.email }),
+    queryFn: () => client.entities.Character.filter({ player_email: user?.email }),
     select: d => d[0],
     enabled: !!user?.email && !isGM,
     refetchInterval: 15000,
@@ -162,7 +162,7 @@ export default function AppLayout({ isGM }) {
             {isGM && <span className="ml-1 opacity-70" style={{ color: 'var(--alert)' }}>[GM]</span>}
           </div>
           <button
-            onClick={() => base44.auth.logout('/')}
+            onClick={() => logout('/')}
             className="text-xs font-terminal tracking-widest opacity-40 hover:opacity-70 transition-opacity w-full text-left"
             style={{ color: 'var(--alert)' }}>
             ⊗ DESCONECTAR

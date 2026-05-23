@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
-import { base44 } from '@/api/base44Client';
+import { client } from '@/api/client';
 import { useQuery } from '@tanstack/react-query';
 import SanityBar from '@/components/ui/SanityBar';
 import HPBar from '@/components/ui/HPBar';
@@ -23,20 +23,20 @@ export default function Dashboard() {
 
   const { data: statuses = [] } = useQuery({
     queryKey: ['statuses', character?.id],
-    queryFn: () => base44.entities.StatusEffect.filter({ character_id: character.id, is_active: true }),
+    queryFn: () => client.entities.StatusEffect.filter({ character_id: character.id, is_active: true }),
     enabled: !!character?.id,
     refetchInterval: 15000,
   });
 
   const { data: powers = [] } = useQuery({
     queryKey: ['powers', character?.id],
-    queryFn: () => base44.entities.Power.filter({ character_id: character.id }),
+    queryFn: () => client.entities.Power.filter({ character_id: character.id }),
     enabled: !!character?.id,
   });
 
   const { data: recentLogs = [] } = useQuery({
     queryKey: ['recent-logs', character?.id],
-    queryFn: () => base44.entities.EventLog.filter({ character_id: character.id }, '-created_date', 5),
+    queryFn: () => client.entities.EventLog.filter({ character_id: character.id }, '-created_date', 5),
     enabled: !!character?.id,
     refetchInterval: 20000,
   });

@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { client } from '@/api/client';
 import CencursaCard from '@/components/ui/CencursaCard';
 import SanityBar from '@/components/character/SanityBar';
 import StatusBadge from '@/components/character/StatusBadge';
@@ -24,29 +24,29 @@ export default function GMPlayers() {
 
   const { data: characters, isLoading } = useQuery({
     queryKey: ['allCharacters'],
-    queryFn: () => base44.entities.Character.list(),
+    queryFn: () => client.entities.Character.list(),
   });
 
   const { data: statuses } = useQuery({
     queryKey: ['charStatuses', selected?.id],
-    queryFn: () => base44.entities.StatusEffect.filter({ character_id: selected.id }),
+    queryFn: () => client.entities.StatusEffect.filter({ character_id: selected.id }),
     enabled: !!selected?.id,
   });
 
   const { data: items } = useQuery({
     queryKey: ['charItems', selected?.id],
-    queryFn: () => base44.entities.InventoryItem.filter({ character_id: selected.id }),
+    queryFn: () => client.entities.InventoryItem.filter({ character_id: selected.id }),
     enabled: !!selected?.id,
   });
 
   const { data: powers } = useQuery({
     queryKey: ['charPowers', selected?.id],
-    queryFn: () => base44.entities.Power.filter({ character_id: selected.id }),
+    queryFn: () => client.entities.Power.filter({ character_id: selected.id }),
     enabled: !!selected?.id,
   });
 
   const updateChar = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.Character.update(id, data),
+    mutationFn: ({ id, data }) => client.entities.Character.update(id, data),
     onSuccess: (_, vars) => {
       qc.invalidateQueries({ queryKey: ['allCharacters'] });
       setSelected(prev => ({ ...prev, ...vars.data }));
@@ -54,11 +54,11 @@ export default function GMPlayers() {
   });
 
   const logEvent = useMutation({
-    mutationFn: data => base44.entities.EventLog.create(data),
+    mutationFn: data => client.entities.EventLog.create(data),
   });
 
   const addItem = useMutation({
-    mutationFn: data => base44.entities.InventoryItem.create(data),
+    mutationFn: data => client.entities.InventoryItem.create(data),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['charItems', selected?.id] });
       setNewItem({ name: '', category: 'misc', rarity: 'common', description: '', effects: '', origin: '' });
@@ -67,12 +67,12 @@ export default function GMPlayers() {
   });
 
   const removeItem = useMutation({
-    mutationFn: id => base44.entities.InventoryItem.delete(id),
+    mutationFn: id => client.entities.InventoryItem.delete(id),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['charItems', selected?.id] }),
   });
 
   const addStatus = useMutation({
-    mutationFn: data => base44.entities.StatusEffect.create(data),
+    mutationFn: data => client.entities.StatusEffect.create(data),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['charStatuses', selected?.id] });
       setNewStatus({ type: 'fear', description: '', duration: '', intensity: 'mild' });
@@ -81,12 +81,12 @@ export default function GMPlayers() {
   });
 
   const removeStatus = useMutation({
-    mutationFn: id => base44.entities.StatusEffect.delete(id),
+    mutationFn: id => client.entities.StatusEffect.delete(id),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['charStatuses', selected?.id] }),
   });
 
   const addPower = useMutation({
-    mutationFn: data => base44.entities.Power.create(data),
+    mutationFn: data => client.entities.Power.create(data),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['charPowers', selected?.id] });
       setNewPower({ name: '', description: '', sanity_cost: 0, psychological_effects: '', origin_trauma: '' });

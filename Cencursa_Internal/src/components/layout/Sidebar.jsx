@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { base44 } from '@/api/base44Client';
+import { useAuth } from '@/lib/AuthContext';
 
 const NAV_PLAYER = [
   { path: '/dashboard', label: 'REGISTRO', icon: '◈' },
@@ -20,6 +20,7 @@ const NAV_GM = [
 
 export default function Sidebar({ user, character }) {
   const { pathname } = useLocation();
+  const { logout } = useAuth();
   const isGM = user?.role === 'admin';
   const nav = isGM ? NAV_GM : NAV_PLAYER;
 
@@ -112,7 +113,7 @@ export default function Sidebar({ user, character }) {
           {user?.email}
         </div>
         <button
-          onClick={() => base44.auth.logout('/')}
+          onClick={() => logout('/')}
           className="font-terminal text-xs text-muted-foreground hover:text-alert transition-colors tracking-widest w-full text-left"
         >
           ← DESCONECTAR

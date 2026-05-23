@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
-import { base44 } from '@/api/base44Client';
+import { client } from '@/api/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 const TYPE_LABELS = {
@@ -25,26 +25,26 @@ export default function GMDocuments() {
 
   const { data: documents = [] } = useQuery({
     queryKey: ['all-documents'],
-    queryFn: () => base44.entities.Document.list('-created_date', 50),
+    queryFn: () => client.entities.Document.list('-created_date', 50),
   });
 
   const { data: characters = [] } = useQuery({
     queryKey: ['all-characters'],
-    queryFn: () => base44.entities.Character.list(),
+    queryFn: () => client.entities.Character.list(),
   });
 
   const createDoc = useMutation({
-    mutationFn: data => base44.entities.Document.create(data),
+    mutationFn: data => client.entities.Document.create(data),
     onSuccess: () => { qc.invalidateQueries(['all-documents']); setShowForm(false); resetForm(); },
   });
 
   const updateDoc = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.Document.update(id, data),
+    mutationFn: ({ id, data }) => client.entities.Document.update(id, data),
     onSuccess: async (updated) => {
       qc.invalidateQueries(['all-documents']);
       setEditing(null);
       // Log unlocks
-      await base44.entities.EventLog.create({
+      await client.entities.EventLog.create({
         type: 'document_unlocked',
         message: `Documento "${updated.title}" atualizado`,
         is_global: false,
@@ -53,7 +53,7 @@ export default function GMDocuments() {
   });
 
   const deleteDoc = useMutation({
-    mutationFn: id => base44.entities.Document.delete(id),
+    mutationFn: id => client.entities.Document.delete(id),
     onSuccess: () => qc.invalidateQueries(['all-documents']),
   });
 

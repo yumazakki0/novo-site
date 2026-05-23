@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { client } from '@/api/client';
 import { useAuth } from '@/lib/AuthContext';
 import SanityBar from '@/components/character/SanityBar';
 import SoulsCounter from '@/components/character/SoulsCounter';
@@ -20,7 +20,7 @@ export default function PlayerDashboard() {
 
   const { data: characters, isLoading } = useQuery({
     queryKey: ['myCharacter', user?.email],
-    queryFn: () => base44.entities.Character.filter({ player_email: user?.email }),
+    queryFn: () => client.entities.Character.filter({ player_email: user?.email }),
     enabled: !!user?.email,
     refetchInterval: 15000,
   });
@@ -28,35 +28,35 @@ export default function PlayerDashboard() {
 
   const { data: statuses } = useQuery({
     queryKey: ['statuses', character?.id],
-    queryFn: () => base44.entities.StatusEffect.filter({ character_id: character.id, is_active: true }),
+    queryFn: () => client.entities.StatusEffect.filter({ character_id: character.id, is_active: true }),
     enabled: !!character?.id,
     refetchInterval: 15000,
   });
 
   const { data: worldState } = useQuery({
     queryKey: ['worldState'],
-    queryFn: () => base44.entities.WorldState.list(),
+    queryFn: () => client.entities.WorldState.list(),
     select: d => d[0],
     refetchInterval: 8000,
   });
 
   const { data: recentLogs } = useQuery({
     queryKey: ['recentLogs', character?.id],
-    queryFn: () => base44.entities.EventLog.filter({ character_id: character.id }, '-created_date', 6),
+    queryFn: () => client.entities.EventLog.filter({ character_id: character.id }, '-created_date', 6),
     enabled: !!character?.id,
     refetchInterval: 15000,
   });
 
   const { data: pendingRequests } = useQuery({
     queryKey: ['pendingRequests', character?.id],
-    queryFn: () => base44.entities.Request.filter({ character_id: character.id, status: 'pending' }),
+    queryFn: () => client.entities.Request.filter({ character_id: character.id, status: 'pending' }),
     enabled: !!character?.id,
     refetchInterval: 20000,
   });
 
   const { data: recentApproved } = useQuery({
     queryKey: ['approvedRequests', character?.id],
-    queryFn: () => base44.entities.Request.filter({ character_id: character.id, status: 'approved' }, '-updated_date', 2),
+    queryFn: () => client.entities.Request.filter({ character_id: character.id, status: 'approved' }, '-updated_date', 2),
     enabled: !!character?.id,
     refetchInterval: 20000,
   });

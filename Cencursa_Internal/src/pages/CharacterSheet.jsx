@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { client } from '@/api/client';
 import { useAuth } from '@/lib/AuthContext';
 import AttributeBar from '@/components/character/AttributeBar';
 import SanityBar from '@/components/character/SanityBar';
@@ -33,25 +33,25 @@ export default function CharacterSheet() {
 
   const { data: characters } = useQuery({
     queryKey: ['myCharacter', user?.email],
-    queryFn: () => base44.entities.Character.filter({ player_email: user?.email }),
+    queryFn: () => client.entities.Character.filter({ player_email: user?.email }),
     enabled: !!user?.email,
   });
   const character = characters?.[0];
 
   const { data: statuses } = useQuery({
     queryKey: ['statuses', character?.id],
-    queryFn: () => base44.entities.StatusEffect.filter({ character_id: character.id, is_active: true }),
+    queryFn: () => client.entities.StatusEffect.filter({ character_id: character.id, is_active: true }),
     enabled: !!character?.id,
   });
 
   const { data: powers } = useQuery({
     queryKey: ['powers', character?.id],
-    queryFn: () => base44.entities.Power.filter({ character_id: character.id, is_active: true }),
+    queryFn: () => client.entities.Power.filter({ character_id: character.id, is_active: true }),
     enabled: !!character?.id,
   });
 
   const updateAvatar = useMutation({
-    mutationFn: (avatar_url) => base44.entities.Character.update(character.id, { avatar_url }),
+    mutationFn: (avatar_url) => client.entities.Character.update(character.id, { avatar_url }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['myCharacter', user?.email] }),
   });
 

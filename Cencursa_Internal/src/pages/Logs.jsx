@@ -1,5 +1,5 @@
 import { useOutletContext } from 'react-router-dom';
-import { base44 } from '@/api/base44Client';
+import { client } from '@/api/client';
 import { useQuery } from '@tanstack/react-query';
 
 const LOG_TYPE_CONFIG = {
@@ -25,14 +25,14 @@ export default function Logs() {
 
   const { data: personalLogs = [] } = useQuery({
     queryKey: ['logs', character?.id],
-    queryFn: () => base44.entities.EventLog.filter({ character_id: character.id }, '-created_date', 50),
+    queryFn: () => client.entities.EventLog.filter({ character_id: character.id }, '-created_date', 50),
     enabled: !!character?.id,
     refetchInterval: 15000,
   });
 
   const { data: globalLogs = [] } = useQuery({
     queryKey: ['global-logs'],
-    queryFn: () => base44.entities.EventLog.filter({ is_global: true }, '-created_date', 20),
+    queryFn: () => client.entities.EventLog.filter({ is_global: true }, '-created_date', 20),
     refetchInterval: 15000,
   });
 

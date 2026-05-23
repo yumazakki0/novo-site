@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { client } from '@/api/client';
 import CencursaCard from '@/components/ui/CencursaCard';
 import { useState } from 'react';
 
@@ -18,16 +18,16 @@ export default function GMDocuments() {
 
   const { data: docs } = useQuery({
     queryKey: ['allDocuments'],
-    queryFn: () => base44.entities.Document.list('-created_date'),
+    queryFn: () => client.entities.Document.list('-created_date'),
   });
 
   const { data: characters } = useQuery({
     queryKey: ['allCharacters'],
-    queryFn: () => base44.entities.Character.list(),
+    queryFn: () => client.entities.Character.list(),
   });
 
   const createDoc = useMutation({
-    mutationFn: data => base44.entities.Document.create(data),
+    mutationFn: data => client.entities.Document.create(data),
     onSuccess: (doc) => {
       qc.invalidateQueries({ queryKey: ['allDocuments'] });
       setShowCreate(false);
@@ -36,7 +36,7 @@ export default function GMDocuments() {
   });
 
   const updateDoc = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.Document.update(id, data),
+    mutationFn: ({ id, data }) => client.entities.Document.update(id, data),
     onSuccess: (_, vars) => {
       qc.invalidateQueries({ queryKey: ['allDocuments'] });
       setSelected(prev => ({ ...prev, ...vars.data }));
@@ -44,11 +44,11 @@ export default function GMDocuments() {
   });
 
   const logEvent = useMutation({
-    mutationFn: data => base44.entities.EventLog.create(data),
+    mutationFn: data => client.entities.EventLog.create(data),
   });
 
   const deleteDoc = useMutation({
-    mutationFn: id => base44.entities.Document.delete(id),
+    mutationFn: id => client.entities.Document.delete(id),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['allDocuments'] }); setSelected(null); },
   });
 

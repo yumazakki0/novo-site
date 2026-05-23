@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { client } from '@/api/client';
 import CencursaCard from '@/components/ui/CencursaCard';
 import { useNavigate } from 'react-router-dom';
 
@@ -22,7 +22,7 @@ export default function GMCreateCharacter() {
   const qc = useQueryClient();
 
   const createChar = useMutation({
-    mutationFn: data => base44.entities.Character.create(data),
+    mutationFn: data => client.entities.Character.create(data),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['allCharacters'] });
       navigate('/gm/players');

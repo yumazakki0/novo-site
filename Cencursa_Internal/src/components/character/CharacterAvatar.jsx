@@ -14,8 +14,8 @@ export default function CharacterAvatar({ character, size = 'md', onUpload = nul
   const handleFileChange = async (e) => {
     const file = e.target.files?.[0];
     if (!file || !onUpload) return;
-    const { base44 } = await import('@/api/base44Client');
-    const { file_url } = await base44.integrations.Core.UploadFile({ file });
+    const { client } = await import('@/api/client');
+    const { file_url } = await client.integrations.Core.UploadFile({ file });
     onUpload(file_url);
   };
 

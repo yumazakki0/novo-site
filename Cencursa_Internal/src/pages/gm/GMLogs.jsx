@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { client } from '@/api/client';
 import CencursaCard from '@/components/ui/CencursaCard';
 import { useState } from 'react';
 
@@ -26,17 +26,17 @@ export default function GMLogs() {
 
   const { data: logs } = useQuery({
     queryKey: ['allLogs'],
-    queryFn: () => base44.entities.EventLog.list('-created_date', 100),
+    queryFn: () => client.entities.EventLog.list('-created_date', 100),
     refetchInterval: 10000,
   });
 
   const { data: characters } = useQuery({
     queryKey: ['allCharacters'],
-    queryFn: () => base44.entities.Character.list(),
+    queryFn: () => client.entities.Character.list(),
   });
 
   const createLog = useMutation({
-    mutationFn: data => base44.entities.EventLog.create(data),
+    mutationFn: data => client.entities.EventLog.create(data),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['allLogs'] });
       setCustomMsg('');
@@ -44,7 +44,7 @@ export default function GMLogs() {
   });
 
   const deleteLog = useMutation({
-    mutationFn: id => base44.entities.EventLog.delete(id),
+    mutationFn: id => client.entities.EventLog.delete(id),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['allLogs'] }),
   });
 
