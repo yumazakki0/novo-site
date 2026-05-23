@@ -1,0 +1,47 @@
+{
+  "name": "StatusEffect",
+  "type": "object",
+  "properties": {
+    "character_id": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "bleeding",
+        "fear",
+        "corruption",
+        "exhaustion",
+        "insanity",
+        "curse",
+        "infection"
+      ]
+    },
+    "label": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "duration": {
+      "type": "string"
+    },
+    "intensity": {
+      "type": "string",
+      "enum": [
+        "mild",
+        "moderate",
+        "severe"
+      ],
+      "default": "mild"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "required": [
+    "character_id",
+    "type"
+  ]
+}

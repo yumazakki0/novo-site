@@ -1,0 +1,45 @@
+{
+  "name": "Request",
+  "type": "object",
+  "properties": {
+    "character_id": {
+      "type": "string"
+    },
+    "character_name": {
+      "type": "string"
+    },
+    "player_email": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "item_use",
+        "rest",
+        "trade",
+        "special_action"
+      ],
+      "default": "special_action"
+    },
+    "description": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "approved",
+        "denied"
+      ],
+      "default": "pending"
+    },
+    "gm_response": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "character_id",
+    "type",
+    "description"
+  ]
+}

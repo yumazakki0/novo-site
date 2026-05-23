@@ -1,0 +1,59 @@
+{
+  "name": "Document",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "report",
+        "recording",
+        "secret_file",
+        "corrupted_record",
+        "image",
+        "cencursa_log"
+      ],
+      "default": "report"
+    },
+    "content": {
+      "type": "string"
+    },
+    "censored_parts": {
+      "type": "string",
+      "description": "Partes censuradas ou redacted"
+    },
+    "access_level": {
+      "type": "string",
+      "enum": [
+        "public",
+        "restricted",
+        "classified",
+        "eyes_only"
+      ],
+      "default": "restricted"
+    },
+    "unlocked_for": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Lista de character_ids com acesso"
+    },
+    "is_corrupted": {
+      "type": "boolean",
+      "default": false
+    },
+    "file_url": {
+      "type": "string"
+    },
+    "tags": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "title",
+    "type"
+  ]
+}

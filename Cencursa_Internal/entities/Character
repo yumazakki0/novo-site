@@ -1,0 +1,120 @@
+{
+  "name": "Character",
+  "type": "object",
+  "properties": {
+    "player_email": {
+      "type": "string",
+      "description": "Email do jogador vinculado"
+    },
+    "player_name": {
+      "type": "string",
+      "description": "Nome do jogador"
+    },
+    "name": {
+      "type": "string",
+      "description": "Nome do personagem"
+    },
+    "age": {
+      "type": "string"
+    },
+    "height": {
+      "type": "string"
+    },
+    "weight": {
+      "type": "string"
+    },
+    "appearance": {
+      "type": "string"
+    },
+    "nationality": {
+      "type": "string"
+    },
+    "occupation": {
+      "type": "string"
+    },
+    "fears": {
+      "type": "string"
+    },
+    "traumas": {
+      "type": "string"
+    },
+    "desires": {
+      "type": "string"
+    },
+    "addictions": {
+      "type": "string"
+    },
+    "important_memory": {
+      "type": "string"
+    },
+    "mental_instability": {
+      "type": "string"
+    },
+    "str": {
+      "type": "number",
+      "default": 5
+    },
+    "agi": {
+      "type": "number",
+      "default": 5
+    },
+    "res": {
+      "type": "number",
+      "default": 5
+    },
+    "int": {
+      "type": "number",
+      "default": 5
+    },
+    "per": {
+      "type": "number",
+      "default": 5
+    },
+    "pre": {
+      "type": "number",
+      "default": 5
+    },
+    "will": {
+      "type": "number",
+      "default": 5
+    },
+    "hp": {
+      "type": "number",
+      "default": 10
+    },
+    "hp_max": {
+      "type": "number",
+      "default": 10
+    },
+    "sanity": {
+      "type": "number",
+      "default": 100
+    },
+    "sanity_max": {
+      "type": "number",
+      "default": 100
+    },
+    "souls": {
+      "type": "number",
+      "default": 0
+    },
+    "is_marked": {
+      "type": "boolean",
+      "default": false
+    },
+    "avatar_url": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "required": [
+    "name",
+    "player_email"
+  ]
+}

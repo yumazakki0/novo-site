@@ -1,0 +1,33 @@
+{
+  "name": "Power",
+  "type": "object",
+  "properties": {
+    "character_id": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "sanity_cost": {
+      "type": "number",
+      "default": 0
+    },
+    "psychological_effects": {
+      "type": "string"
+    },
+    "origin_trauma": {
+      "type": "string"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "required": [
+    "character_id",
+    "name"
+  ]
+}

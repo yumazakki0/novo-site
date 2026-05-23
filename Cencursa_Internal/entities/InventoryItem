@@ -1,0 +1,56 @@
+{
+  "name": "InventoryItem",
+  "type": "object",
+  "properties": {
+    "character_id": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "weapon",
+        "armor",
+        "consumable",
+        "artifact",
+        "document",
+        "misc"
+      ],
+      "default": "misc"
+    },
+    "rarity": {
+      "type": "string",
+      "enum": [
+        "common",
+        "uncommon",
+        "rare",
+        "epic",
+        "cursed"
+      ],
+      "default": "common"
+    },
+    "description": {
+      "type": "string"
+    },
+    "effects": {
+      "type": "string"
+    },
+    "origin": {
+      "type": "string"
+    },
+    "is_equipped": {
+      "type": "boolean",
+      "default": false
+    },
+    "quantity": {
+      "type": "number",
+      "default": 1
+    }
+  },
+  "required": [
+    "character_id",
+    "name"
+  ]
+}

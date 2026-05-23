@@ -1,0 +1,52 @@
+{
+  "name": "WorldState",
+  "type": "object",
+  "properties": {
+    "weather": {
+      "type": "string",
+      "enum": [
+        "rain",
+        "fog",
+        "storm",
+        "clear",
+        "blizzard",
+        "ash"
+      ],
+      "default": "rain"
+    },
+    "global_alert": {
+      "type": "string"
+    },
+    "global_alert_active": {
+      "type": "boolean",
+      "default": false
+    },
+    "world_event": {
+      "type": "string"
+    },
+    "world_event_active": {
+      "type": "boolean",
+      "default": false
+    },
+    "system_message": {
+      "type": "string"
+    },
+    "system_message_active": {
+      "type": "boolean",
+      "default": false
+    },
+    "phase": {
+      "type": "string",
+      "default": "AFTER LIFE \u2014 PHASE I"
+    },
+    "session_number": {
+      "type": "number",
+      "default": 1
+    },
+    "date_in_game": {
+      "type": "string",
+      "default": "London, 2014"
+    }
+  },
+  "required": []
+}

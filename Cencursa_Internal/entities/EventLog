@@ -1,0 +1,51 @@
+{
+  "name": "EventLog",
+  "type": "object",
+  "properties": {
+    "character_id": {
+      "type": "string"
+    },
+    "character_name": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "sanity_loss",
+        "hp_change",
+        "status_applied",
+        "status_removed",
+        "item_acquired",
+        "item_removed",
+        "souls_change",
+        "document_unlocked",
+        "power_granted",
+        "death",
+        "encounter",
+        "system",
+        "gm_action",
+        "request_response",
+        "alert"
+      ],
+      "default": "system"
+    },
+    "message": {
+      "type": "string"
+    },
+    "value": {
+      "type": "number"
+    },
+    "is_global": {
+      "type": "boolean",
+      "default": false
+    },
+    "is_hidden": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "type",
+    "message"
+  ]
+}
