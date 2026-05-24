@@ -9,7 +9,8 @@ import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 // Layout
 import AppLayout from './components/layout/AppLayout';
 
-// Player pages
+// Pages
+import Login from './pages/Login';
 import PlayerDashboard from './pages/PlayerDashboard';
 import CharacterSheet from './pages/CharacterSheet';
 import Inventory from './pages/Inventory';
@@ -28,7 +29,7 @@ import GMWorld from './pages/gm/GMWorld';
 import ProtectedGMRoute from './components/ProtectedGMRoute';
 
 const AuthenticatedApp = () => {
-  const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin, user } = useAuth();
+  const { isLoadingAuth, isLoadingPublicSettings, isAuthenticated, user } = useAuth();
 
   if (isLoadingPublicSettings || isLoadingAuth) {
     return (
@@ -44,13 +45,8 @@ const AuthenticatedApp = () => {
     );
   }
 
-  if (authError) {
-    if (authError.type === 'user_not_registered') {
-      return <UserNotRegisteredError />;
-    } else if (authError.type === 'auth_required') {
-      navigateToLogin();
-      return null;
-    }
+  if (!isAuthenticated || !user) {
+    return <Login />;
   }
 
   const isGM = user?.role === 'admin';

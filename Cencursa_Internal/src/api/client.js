@@ -52,7 +52,63 @@ const INITIAL_DATA = {
       created_date: '2026-01-01T00:00:01.000Z'
     }
   ],
-  InventoryItem: [],
+  InventoryItem: [
+    {
+      id: 'item-1',
+      character_id: 'char-1',
+      name: 'Revólver .38',
+      description: 'Um revólver de calibre .38 em bom estado de funcionamento',
+      category: 'weapon',
+      rarity: 'common',
+      is_equipped: true,
+      quantity: 1,
+      created_date: '2026-01-01T00:00:02.000Z'
+    },
+    {
+      id: 'item-2',
+      character_id: 'char-1',
+      name: 'Jaqueta de Couro',
+      description: 'Uma jaqueta de couro desgastada pelos anos',
+      category: 'armor',
+      rarity: 'common',
+      is_equipped: true,
+      quantity: 1,
+      created_date: '2026-01-01T00:00:03.000Z'
+    },
+    {
+      id: 'item-3',
+      character_id: 'char-1',
+      name: 'Cigarro (maço)',
+      description: 'Um maço de cigarros, quase vazio',
+      category: 'consumable',
+      rarity: 'common',
+      is_equipped: false,
+      quantity: 1,
+      created_date: '2026-01-01T00:00:04.000Z'
+    },
+    {
+      id: 'item-4',
+      character_id: 'char-1',
+      name: 'Medalha Antiga',
+      description: 'Uma medalha de ouro antigo com inscrições ilegíveis',
+      category: 'artifact',
+      rarity: 'rare',
+      is_equipped: false,
+      quantity: 1,
+      created_date: '2026-01-01T00:00:05.000Z'
+    },
+    {
+      id: 'item-5',
+      character_id: 'char-1',
+      name: 'Caderno de Anotações',
+      description: 'Um caderno com anotações fragmentadas sobre investigações',
+      category: 'document',
+      rarity: 'uncommon',
+      is_equipped: false,
+      quantity: 1,
+      created_date: '2026-01-01T00:00:06.000Z'
+    }
+  ],
   Power: [],
   Request: [],
   StatusEffect: [],
@@ -150,20 +206,26 @@ const saveUser = (user) => {
 
 const getStoredUser = () => {
   const storage = localStorageSafe();
-  if (!storage) return defaultUsers.player;
+  if (!storage) return null;
   const raw = storage.getItem(STORAGE_USER_KEY);
   if (raw) {
     try {
       return JSON.parse(raw);
     } catch {
-      // ignore
+      storage.removeItem(STORAGE_USER_KEY);
+      return null;
     }
   }
+
   const params = new URLSearchParams(window.location.search);
   const role = params.get('role');
-  const user = role === 'admin' ? defaultUsers.admin : defaultUsers.player;
-  saveUser(user);
-  return user;
+  if (role === 'admin' || role === 'player') {
+    const user = role === 'admin' ? defaultUsers.admin : defaultUsers.player;
+    saveUser(user);
+    return user;
+  }
+
+  return null;
 };
 
 const getId = () => {
@@ -294,6 +356,13 @@ const uploadFile = async ({ file }) => {
 export const client = {
   auth: {
     me: async () => getStoredUser(),
+    login: async (user) => {
+      if (!user || !user.email) {
+        throw new Error('Email is required');
+      }
+      saveUser(user);
+      return user;
+    },
     logout: (redirect = true) => {
       const storage = localStorageSafe();
       if (storage) {

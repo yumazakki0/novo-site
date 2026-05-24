@@ -241,7 +241,7 @@ export default function AppLayout({ isGM }) {
         )}
 
         <div className="flex-1 overflow-auto">
-          <Outlet />
+          <Outlet context={{ character: myCharacter }} />
         </div>
       </main>
     </div>

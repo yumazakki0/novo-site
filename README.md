@@ -1,33 +1,39 @@
-**Welcome to your Cencursa project** 
+# 🕯️ Cencursa Project
 
-**About**
+> *“Quando os sinos tocam, o mundo se cala.”*
 
-View and edit your app locally without external service dependency.
+## 📖 Sobre
 
-This project contains everything you need to run the app in a native browser environment.
+**Cencursa Project** é um pequeno projeto criado para a mesa autoral de RPG **“Quando os Sinos Tocam”**, uma experiência sombria inspirada em universos como :contentReference[oaicite:0]{index=0} e :contentReference[oaicite:1]{index=1}, mas com sua própria identidade.
 
-**Edit the code in your local development environment**
+O mundo de Cencursa é cruel e decadente.
 
-Any change pushed to the repo will update the application source.
+A esperança desapareceu há muito tempo.  
+A fome percorre as ruas.  
+A seca transforma cidades em tumbas silenciosas.  
+Os sinos ecoam como um aviso inevitável.
 
-**Prerequisites:** 
+As pessoas sobrevivem mascarando o desespero enquanto caminham sobre um solo marcado por sangue, choro e rancor. Não existem heróis perfeitos aqui, apenas indivíduos tentando suportar mais um dia em um mundo que parece já ter desistido deles.
 
-1. Clone the repository using the project's Git URL 
-2. Navigate to the project directory
-3. Install dependencies: `npm install`
-4. Create an `.env.local` file if you need to override app settings
+---
 
-```
-VITE_APP_ID=your_app_id
-VITE_APP_BASE_URL=your_backend_url
-```
+# ⚙️ Desenvolvimento Local
 
-Run the app: `npm run dev`
+Qualquer alteração enviada para o repositório atualizará automaticamente a aplicação.
 
-**Publish your changes**
+## 📌 Pré-requisitos
 
-Deploy the application to your preferred hosting environment.
+Antes de começar, certifique-se de possuir:
 
-**Docs & Support**
+- :contentReference[oaicite:2]{index=2} instalado
+- :contentReference[oaicite:3]{index=3} configurado
+- Um gerenciador de pacotes como `npm`
 
-Development docs: follow your local project conventions and tooling.
+---
+
+# 🚀 Instalação
+
+Clone o repositório:
+
+```bash
+git clone <URL_DO_REPOSITORIO>

@@ -28,15 +28,20 @@ export const AuthProvider = ({ children }) => {
     try {
       setIsLoadingAuth(true);
       const currentUser = await client.auth.me();
-      setUser(currentUser);
-      setIsAuthenticated(true);
+      if (currentUser) {
+        setUser(currentUser);
+        setIsAuthenticated(true);
+        setAuthError(null);
+      } else {
+        setUser(null);
+        setIsAuthenticated(false);
+      }
       setAuthChecked(true);
     } catch (error) {
       console.error('User auth check failed:', error);
       setUser(null);
       setIsAuthenticated(false);
       setAuthChecked(true);
-      setAuthError({ type: 'auth_required', message: 'Authentication failed' });
     } finally {
       setIsLoadingAuth(false);
     }
@@ -45,7 +50,24 @@ export const AuthProvider = ({ children }) => {
   const logout = (shouldRedirect = true) => {
     setUser(null);
     setIsAuthenticated(false);
-    client.auth.logout(shouldRedirect ? window.location.href : null);
+    client.auth.logout(shouldRedirect);
+  };
+
+  const login = async (user) => {
+    try {
+      setIsLoadingAuth(true);
+      const loggedInUser = await client.auth.login(user);
+      setUser(loggedInUser);
+      setIsAuthenticated(true);
+      setAuthError(null);
+      return loggedInUser;
+    } catch (error) {
+      console.error('Login failed:', error);
+      setAuthError({ type: 'login_failed', message: error.message });
+      throw error;
+    } finally {
+      setIsLoadingAuth(false);
+    }
   };
 
   const navigateToLogin = () => {
@@ -62,6 +84,7 @@ export const AuthProvider = ({ children }) => {
       appPublicSettings,
       authChecked,
       logout,
+      login,
       navigateToLogin,
       checkUserAuth,
       checkAppState,
