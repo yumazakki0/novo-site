@@ -1,39 +1,97 @@
+````md
 # 🕯️ Cencursa Project
 
-> *“Quando os sinos tocam, o mundo se cala.”*
+> *“Quando os sinos tocam, até a luz parece desistir do mundo.”*
 
-## 📖 Sobre
+## Sobre
 
-**Cencursa Project** é um pequeno projeto criado para a mesa autoral de RPG **“Quando os Sinos Tocam”**, uma experiência sombria inspirada em universos como :contentReference[oaicite:0]{index=0} e :contentReference[oaicite:1]{index=1}, mas com sua própria identidade.
+Cencursa Project é um pequeno projeto criado para a mesa autoral de RPG **“Quando os Sinos Tocam”**.
 
-O mundo de Cencursa é cruel e decadente.
+Inspirado em :contentReference[oaicite:0]{index=0} e :contentReference[oaicite:1]{index=1}, o projeto busca criar uma experiência pesada, melancólica e decadente, com foco em atmosfera, narrativa e imersão.
 
-A esperança desapareceu há muito tempo.  
-A fome percorre as ruas.  
-A seca transforma cidades em tumbas silenciosas.  
-Os sinos ecoam como um aviso inevitável.
+O mundo de Cencursa é cruel.
 
-As pessoas sobrevivem mascarando o desespero enquanto caminham sobre um solo marcado por sangue, choro e rancor. Não existem heróis perfeitos aqui, apenas indivíduos tentando suportar mais um dia em um mundo que parece já ter desistido deles.
-
----
-
-# ⚙️ Desenvolvimento Local
-
-Qualquer alteração enviada para o repositório atualizará automaticamente a aplicação.
-
-## 📌 Pré-requisitos
-
-Antes de começar, certifique-se de possuir:
-
-- :contentReference[oaicite:2]{index=2} instalado
-- :contentReference[oaicite:3]{index=3} configurado
-- Um gerenciador de pacotes como `npm`
+A fome cobre as cidades.  
+A seca matou os campos.  
+As pessoas perderam a fé umas nas outras.  
+E o som dos sinos anuncia que algo pior ainda está por vir.
 
 ---
 
-# 🚀 Instalação
+# ⚙️ Funcionalidades
+
+- Sistema de login
+- Inventário
+- Sistema de personagens
+- Interface imersiva
+- Painel do mestre
+- Animações
+- Sistema de áudio ambiente
+- Salvamento de progresso
+- Eventos narrativos
+- Organização de sessões
+
+---
+
+# 🚀 Desenvolvimento Local
 
 Clone o repositório:
 
 ```bash
 git clone <URL_DO_REPOSITORIO>
+````
+
+Entre na pasta do projeto:
+
+```bash
+cd cencursa-project
+```
+
+Instale as dependências:
+
+```bash
+npm install
+```
+
+---
+
+# 🔧 Configuração
+
+Caso necessário, crie um arquivo `.env.local`
+
+```env
+VITE_APP_ID=your_app_id
+VITE_APP_BASE_URL=your_backend_url
+```
+
+---
+
+# ▶️ Rodando o Projeto
+
+```bash
+npm run dev
+```
+
+---
+
+# 📂 Estrutura
+
+```bash
+src/
+├── components/
+├── pages/
+├── systems/
+├── assets/
+└── styles/
+```
+
+---
+
+# 🕯️ Objetivo
+
+Cencursa não tenta ser um RPG sobre heróis.
+
+É apenas um mundo cansado… tentando continuar existindo.
+
+```
+```
