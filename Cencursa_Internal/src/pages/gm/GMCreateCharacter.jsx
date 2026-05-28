@@ -27,6 +27,9 @@ export default function GMCreateCharacter() {
       qc.invalidateQueries({ queryKey: ['allCharacters'] });
       navigate('/gm/players');
     },
+    onError: (error) => {
+      console.error('[GMCreateCharacter] createChar error', error);
+    },
   });
 
   const set = (key, val) => setForm(f => ({ ...f, [key]: val }));
@@ -152,6 +155,11 @@ export default function GMCreateCharacter() {
         </CencursaCard>
       )}
 
+      {createChar.isError && (
+        <div className="p-3 rounded-sm bg-red-900/20 border border-red-700 text-sm text-red-200">
+          Erro ao criar personagem: {createChar.error?.message || 'Falha desconhecida'}
+        </div>
+      )}
       <div className="flex gap-3">
         <button
           onClick={() => createChar.mutate(form)}

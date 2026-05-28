@@ -1,11 +1,29 @@
+import { createClient } from '@supabase/supabase-js';
+
 const STORAGE_DATA_KEY = 'cencursa_app_data';
 const STORAGE_USER_KEY = 'cencursa_app_user';
 const STORAGE_UPLOADS_KEY = 'cencursa_app_uploads';
 
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const useRemoteDatabase = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
+const supabase = useRemoteDatabase ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+const ENTITY_TABLE_MAP = {
+  Character: 'characters',
+  Document: 'documents',
+  EventLog: 'event_logs',
+  InventoryItem: 'inventory_items',
+  Power: 'powers',
+  Request: 'requests',
+  StatusEffect: 'status_effects',
+  WorldState: 'world_states',
+};
+
+const getTableName = (name) => ENTITY_TABLE_MAP[name] || name.toLowerCase();
+
 const INITIAL_DATA = {
   Character: [
     {
-      id: 'char-1',
       player_email: 'player@example.com',
       player_name: 'Player One',
       name: 'MORGANA',
@@ -150,6 +168,87 @@ const localStorageSafe = () => {
   return window.localStorage;
 };
 
+const buildRemoteFilter = (query, builder) => {
+  if (!query || typeof query !== 'object') return builder;
+  Object.entries(query).forEach(([key, value]) => {
+    if (value === undefined || value === null) return;
+    if (Array.isArray(value)) {
+      builder = builder.in(key, value);
+    } else {
+      builder = builder.eq(key, value);
+    }
+  });
+  return builder;
+};
+
+const remoteList = async (name, sort, limit) => {
+  if (!supabase) throw new Error('Remote database is not configured');
+  const table = getTableName(name);
+  let query = supabase.from(table).select('*');
+  if (sort) {
+    const direction = sort.startsWith('-') ? 'desc' : 'asc';
+    const field = sort.replace(/^-/, '');
+    query = query.order(field, { ascending: direction === 'asc' });
+  }
+  if (typeof limit === 'number' && limit > 0) {
+    query = query.limit(limit);
+  }
+  const { data, error } = await query;
+  if (error) throw error;
+  return data || [];
+};
+
+const remoteFilter = async (name, query, sort, limit) => {
+  if (!supabase) throw new Error('Remote database is not configured');
+  const table = getTableName(name);
+  let queryBuilder = supabase.from(table).select('*');
+  queryBuilder = buildRemoteFilter(query, queryBuilder);
+  if (sort) {
+    const direction = sort.startsWith('-') ? 'desc' : 'asc';
+    const field = sort.replace(/^-/, '');
+    queryBuilder = queryBuilder.order(field, { ascending: direction === 'asc' });
+  }
+  if (typeof limit === 'number' && limit > 0) {
+    queryBuilder = queryBuilder.limit(limit);
+  }
+  const { data, error } = await queryBuilder;
+  if (error) throw error;
+  return data || [];
+};
+
+const remoteCreate = async (name, data) => {
+  if (!supabase) throw new Error('Remote database is not configured');
+  const table = getTableName(name);
+  const payload = {
+    ...data,
+    id: data.id || getId(),
+    created_date: data.created_date || new Date().toISOString(),
+  };
+  console.debug('[Supabase] insert', table, payload);
+  const { data: created, error } = await supabase.from(table).insert(payload).select().single();
+  if (error) {
+    console.error('[Supabase] insert error', table, payload, error);
+    throw new Error(error.message || JSON.stringify(error));
+  }
+  return created;
+};
+
+const remoteUpdate = async (name, id, data) => {
+  if (!supabase) throw new Error('Remote database is not configured');
+  const table = getTableName(name);
+  const { data: updated, error } = await supabase.from(table).update(data).eq('id', id).select().single();
+  if (error) throw error;
+  return updated;
+};
+
+const remoteDelete = async (name, id) => {
+  if (!supabase) throw new Error('Remote database is not configured');
+  const table = getTableName(name);
+  const { error } = await supabase.from(table).delete().eq('id', id);
+  if (error) throw error;
+  return null;
+};
+
 const loadData = () => {
   const storage = localStorageSafe();
   if (!storage) {
@@ -264,7 +363,10 @@ const sortEntities = (items, sort) => {
   });
 };
 
-const loadEntityList = (name) => {
+const loadEntityList = async (name) => {
+  if (useRemoteDatabase) {
+    return remoteList(name);
+  }
   const data = loadData();
   return Array.isArray(data[name]) ? data[name] : [];
 };
@@ -275,13 +377,16 @@ const persistEntityList = (name, list) => {
   saveData(data);
 };
 
-const readEntity = (name, id) => {
-  const list = loadEntityList(name);
+const readEntity = async (name, id) => {
+  const list = await loadEntityList(name);
   return list.find((item) => item.id === id) || null;
 };
 
-const filterEntities = (name, query, sort, limit) => {
-  const list = loadEntityList(name).filter((item) => matchQuery(item, query));
+const filterEntities = async (name, query, sort, limit) => {
+  if (useRemoteDatabase) {
+    return remoteFilter(name, query, sort, limit);
+  }
+  const list = (await loadEntityList(name)).filter((item) => matchQuery(item, query));
   const sorted = sortEntities(list, sort);
   if (typeof limit === 'number' && limit > 0) {
     return sorted.slice(0, limit);
@@ -289,8 +394,11 @@ const filterEntities = (name, query, sort, limit) => {
   return sorted;
 };
 
-const createEntity = (name, data) => {
-  const list = loadEntityList(name);
+const createEntity = async (name, data) => {
+  if (useRemoteDatabase) {
+    return remoteCreate(name, data);
+  }
+  const list = await loadEntityList(name);
   const item = {
     ...data,
     id: getId(),
@@ -301,8 +409,11 @@ const createEntity = (name, data) => {
   return clone(item);
 };
 
-const updateEntity = (name, id, data) => {
-  const list = loadEntityList(name);
+const updateEntity = async (name, id, data) => {
+  if (useRemoteDatabase) {
+    return remoteUpdate(name, id, data);
+  }
+  const list = await loadEntityList(name);
   const index = list.findIndex((item) => item.id === id);
   if (index === -1) {
     throw new Error(`Entity ${name} with id ${id} not found`);
@@ -313,8 +424,11 @@ const updateEntity = (name, id, data) => {
   return clone(updated);
 };
 
-const deleteEntity = (name, id) => {
-  const list = loadEntityList(name);
+const deleteEntity = async (name, id) => {
+  if (useRemoteDatabase) {
+    return remoteDelete(name, id);
+  }
+  const list = await loadEntityList(name);
   const index = list.findIndex((item) => item.id === id);
   if (index === -1) {
     throw new Error(`Entity ${name} with id ${id} not found`);
