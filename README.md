@@ -39,6 +39,7 @@ Clone o repositório:
 
 ```bash
 git clone <URL_DO_REPOSITORIO>
+<<<<<<< HEAD
 ````
 
 Entre na pasta do projeto:
@@ -95,3 +96,4 @@ Cencursa não tenta ser um RPG sobre heróis.
 
 ```
 ```
+=======
