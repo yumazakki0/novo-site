@@ -17,8 +17,8 @@ export default function GMPlayers() {
   const qc = useQueryClient();
   const [selected, setSelected] = useState(null);
   const [tab, setTab] = useState('vitals');
-  const [newItem, setNewItem] = useState({ name: '', category: 'misc', rarity: 'common', description: '', effects: '', origin: '' });
-  const [newStatus, setNewStatus] = useState({ type: 'fear', description: '', duration: '', intensity: 'mild' });
+  const [newItem, setNewItem] = useState({ name: '', category: 'misc', rarity: 'common', description: '', quantity: 1, is_equipped: false });
+  const [newStatus, setNewStatus] = useState({ type: 'fear', description: '', duration: 1, intensity: 'mild' });
   const [newPower, setNewPower] = useState({ name: '', description: '', sanity_cost: 0, psychological_effects: '', origin_trauma: '' });
   const [editVitals, setEditVitals] = useState({});
 
@@ -61,7 +61,7 @@ export default function GMPlayers() {
     mutationFn: data => client.entities.InventoryItem.create(data),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['charItems', selected?.id] });
-      setNewItem({ name: '', category: 'misc', rarity: 'common', description: '', effects: '', origin: '' });
+      setNewItem({ name: '', category: 'misc', rarity: 'common', description: '', quantity: 1, is_equipped: false });
       logEvent.mutate({ character_id: selected.id, character_name: selected.name, type: 'item_acquired', message: `${selected.name} recebeu: ${newItem.name}` });
     },
   });
@@ -293,8 +293,8 @@ export default function GMPlayers() {
                       ))}
                     </div>
                     <div className="grid grid-cols-2 gap-3">
-                      <input placeholder="Duração (ex: 1 sessão)" value={newStatus.duration}
-                        onChange={e => setNewStatus(s => ({ ...s, duration: e.target.value }))}
+                      <input type="number" min="1" placeholder="Duração (em turnos)" value={newStatus.duration}
+                        onChange={e => setNewStatus(s => ({ ...s, duration: parseInt(e.target.value, 10) || 1 }))}
                         className="p-2 text-xs font-terminal"
                         style={{ background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(196,169,90,0.2)', color: 'var(--cold-white)', borderRadius: '2px', outline: 'none' }} />
                       <select value={newStatus.intensity}
@@ -310,7 +310,7 @@ export default function GMPlayers() {
                       onChange={e => setNewStatus(s => ({ ...s, description: e.target.value }))}
                       className="w-full p-2 text-xs font-terminal"
                       style={{ background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(196,169,90,0.2)', color: 'var(--cold-white)', borderRadius: '2px', outline: 'none' }} />
-                    <button onClick={() => addStatus.mutate({ ...newStatus, character_id: selected.id, label: STATUS_LABELS[newStatus.type], is_active: true })}
+                    <button onClick={() => addStatus.mutate({ type: newStatus.type, description: newStatus.description, duration: newStatus.duration, intensity: newStatus.intensity, character_id: selected.id, is_active: true })}
                       disabled={addStatus.isPending} className="btn-cencursa">
                       ◈ APLICAR STATUS
                     </button>
@@ -370,7 +370,7 @@ export default function GMPlayers() {
                         </button>
                       ))}
                     </div>
-                    <textarea placeholder="Descrição, efeitos, origem (opcional)" value={newItem.description}
+                    <textarea placeholder="Descrição, efeitos e origem do item" value={newItem.description}
                       onChange={e => setNewItem(i => ({ ...i, description: e.target.value }))}
                       rows={2}
                       className="w-full p-2 text-xs font-body resize-none"

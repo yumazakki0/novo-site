@@ -99,12 +99,12 @@ export default function Documents() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
           style={{ background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(4px)' }}
           onClick={e => e.target === e.currentTarget && setSelected(null)}>
-          <div className="w-full max-w-2xl max-h-[80vh] overflow-y-auto cencursa-card ornament-border p-6 relative slide-in-right">
+          <div className="w-full max-w-2xl max-h-[85vh] overflow-y-auto cencursa-card ornament-border p-6 relative slide-in-right flex flex-col">
             {/* Corner ornaments */}
             <div className="absolute top-2 left-2 w-4 h-4 border-t border-l" style={{ borderColor: 'rgba(196,169,90,0.4)' }} />
             <div className="absolute top-2 right-2 w-4 h-4 border-t border-r" style={{ borderColor: 'rgba(196,169,90,0.4)' }} />
 
-            <div className="flex items-center justify-between mb-1">
+            <div className="flex items-center justify-between mb-1 shrink-0">
               <div className="text-xs font-terminal tracking-widest" style={{ color: ACCESS_COLORS[selected.access_level], fontSize: '0.55rem' }}>
                 CENCURSA CORP. — {TYPE_LABELS[selected.type]?.toUpperCase()} — {selected.access_level?.toUpperCase().replace('_', ' ')}
               </div>
@@ -113,42 +113,44 @@ export default function Documents() {
               </button>
             </div>
 
-            <div className="divider-gold" />
+            <div className="divider-gold shrink-0" />
 
-            <h2 className={`font-grimoire text-2xl mb-4 ${selected.is_corrupted ? 'opacity-70' : ''}`} style={{ color: 'var(--gold)' }}>
+            <h2 className={`font-grimoire text-2xl mb-4 shrink-0 ${selected.is_corrupted ? 'opacity-70' : ''}`} style={{ color: 'var(--gold)' }}>
               {selected.title}
             </h2>
 
-            {selected.content && (
-              <div className="font-body text-sm mb-4" style={{ color: 'var(--cold-white)', opacity: 0.8, lineHeight: 1.8, whiteSpace: 'pre-wrap' }}>
-                {selected.content}
-              </div>
-            )}
-
-            {selected.censored_parts && (
-              <div className="mt-4 p-3 rounded-sm" style={{ background: 'rgba(0,0,0,0.6)', border: '1px solid rgba(204,0,0,0.2)' }}>
-                <div className="text-xs font-terminal mb-2" style={{ color: 'var(--alert)', fontSize: '0.55rem' }}>
-                  SEÇÃO CENSURADA — ACESSO NEGADO
+            <div className="overflow-y-auto flex-1">
+              {selected.content && (
+                <div className="font-body text-sm mb-4" style={{ color: 'var(--cold-white)', opacity: 0.8, lineHeight: 1.8, whiteSpace: 'pre-wrap' }}>
+                  {selected.content}
                 </div>
-                <div className="font-terminal text-xs" style={{ color: 'rgba(204,0,0,0.3)', letterSpacing: '0.05em' }}>
-                  {'█'.repeat(Math.min(200, (selected.censored_parts?.length || 50)))}
+              )}
+
+              {selected.censored_parts && (
+                <div className="mt-4 p-3 rounded-sm" style={{ background: 'rgba(0,0,0,0.6)', border: '1px solid rgba(204,0,0,0.2)' }}>
+                  <div className="text-xs font-terminal mb-2" style={{ color: 'var(--alert)', fontSize: '0.55rem' }}>
+                    SEÇÃO CENSURADA — ACESSO NEGADO
+                  </div>
+                  <div className="font-terminal text-xs" style={{ color: 'rgba(204,0,0,0.3)', letterSpacing: '0.05em' }}>
+                    {'█'.repeat(Math.min(200, (selected.censored_parts?.length || 50)))}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {selected.tags && (
-              <div className="mt-4 flex flex-wrap gap-2">
-                {selected.tags.split(',').map((tag, i) => (
-                  <span key={i} className="text-xs font-terminal px-2 py-0.5"
-                    style={{ border: '1px solid rgba(196,169,90,0.2)', color: 'var(--gold-dark)', fontSize: '0.55rem', borderRadius: '2px' }}>
-                    {tag.trim()}
-                  </span>
-                ))}
-              </div>
-            )}
+              {selected.tags && (
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {selected.tags.split(',').map((tag, i) => (
+                    <span key={i} className="text-xs font-terminal px-2 py-0.5"
+                      style={{ border: '1px solid rgba(196,169,90,0.2)', color: 'var(--gold-dark)', fontSize: '0.55rem', borderRadius: '2px' }}>
+                      {tag.trim()}
+                    </span>
+                  ))}
+                </div>
+              )}
 
-            <div className="mt-4 text-xs font-terminal opacity-30" style={{ color: 'var(--gold-dark)', fontSize: '0.5rem' }}>
-              REGISTRADO EM: {new Date(selected.created_date).toLocaleString('pt-BR')}
+              <div className="mt-4 text-xs font-terminal opacity-30" style={{ color: 'var(--gold-dark)', fontSize: '0.5rem' }}>
+                REGISTRADO EM: {new Date(selected.created_date).toLocaleString('pt-BR')}
+              </div>
             </div>
           </div>
         </div>

@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { client } from '@/api/client';
 import CencursaCard from '@/components/ui/CencursaCard';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const TYPE_OPTIONS = ['report', 'recording', 'secret_file', 'corrupted_record', 'image', 'cencursa_log'];
 const TYPE_LABELS = { report: 'Relatório', recording: 'Gravação', secret_file: 'Arquivo Secreto', corrupted_record: 'Registro Corrompido', image: 'Imagem', cencursa_log: 'Log Cencursa' };
@@ -15,6 +15,24 @@ export default function GMDocuments() {
     title: '', type: 'report', content: '', censored_parts: '',
     access_level: 'restricted', is_corrupted: false, tags: '', unlocked_for: [],
   });
+  const [editForm, setEditForm] = useState({
+    title: '', type: 'report', content: '', censored_parts: '',
+    access_level: 'restricted', is_corrupted: false, tags: '', unlocked_for: [],
+  });
+
+  useEffect(() => {
+    if (!selected) return;
+    setEditForm({
+      title: selected.title || '',
+      type: selected.type || 'report',
+      content: selected.content || '',
+      censored_parts: selected.censored_parts || '',
+      access_level: selected.access_level || 'restricted',
+      is_corrupted: selected.is_corrupted || false,
+      tags: selected.tags || '',
+      unlocked_for: selected.unlocked_for || [],
+    });
+  }, [selected]);
 
   const { data: docs } = useQuery({
     queryKey: ['allDocuments'],
@@ -37,9 +55,19 @@ export default function GMDocuments() {
 
   const updateDoc = useMutation({
     mutationFn: ({ id, data }) => client.entities.Document.update(id, data),
-    onSuccess: (_, vars) => {
+    onSuccess: (updated) => {
       qc.invalidateQueries({ queryKey: ['allDocuments'] });
-      setSelected(prev => ({ ...prev, ...vars.data }));
+      setSelected(updated);
+      setEditForm({
+        title: updated.title || '',
+        type: updated.type || 'report',
+        content: updated.content || '',
+        censored_parts: updated.censored_parts || '',
+        access_level: updated.access_level || 'restricted',
+        is_corrupted: updated.is_corrupted || false,
+        tags: updated.tags || '',
+        unlocked_for: updated.unlocked_for || [],
+      });
     },
   });
 
@@ -53,13 +81,27 @@ export default function GMDocuments() {
   });
 
   const toggleUnlock = (docId, charId, currentUnlocked) => {
-    const updated = currentUnlocked?.includes(charId)
+    const isUnlocked = currentUnlocked?.includes(charId);
+    const updated = isUnlocked
       ? (currentUnlocked || []).filter(id => id !== charId)
       : [...(currentUnlocked || []), charId];
     updateDoc.mutate({ id: docId, data: { unlocked_for: updated } });
+
     const char = characters?.find(c => c.id === charId);
-    if (!currentUnlocked?.includes(charId)) {
-      logEvent.mutate({ character_id: charId, character_name: char?.name, type: 'document_unlocked', message: `Documento desbloqueado: ${selected?.title || 'Desconhecido'}` });
+    if (!isUnlocked) {
+      logEvent.mutate({
+        character_id: charId,
+        character_name: char?.name,
+        type: 'document_unlocked',
+        message: `Documento desbloqueado: ${selected?.title || 'Desconhecido'}`,
+      });
+    } else {
+      logEvent.mutate({
+        character_id: charId,
+        character_name: char?.name,
+        type: 'document_locked',
+        message: `Acesso ao documento revogado: ${selected?.title || 'Desconhecido'}`,
+      });
     }
   };
 
@@ -176,6 +218,90 @@ export default function GMDocuments() {
                 </button>
               </div>
             </div>
+
+            <div className="space-y-4 mb-4">
+              <div className="grid grid-cols-1 gap-3">
+                <div>
+                  <label className="text-xs font-terminal tracking-widest mb-1 block" style={{ color: 'var(--gold-dark)', fontSize: '0.55rem' }}>TÍTULO</label>
+                  <input value={editForm.title} onChange={e => setEditForm(prev => ({ ...prev, title: e.target.value }))}
+                    className="w-full p-2 text-sm font-body"
+                    style={{ background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(196,169,90,0.2)', color: 'var(--cold-white)', borderRadius: '2px', outline: 'none' }} />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-xs font-terminal tracking-widest mb-1 block" style={{ color: 'var(--gold-dark)', fontSize: '0.55rem' }}>TIPO</label>
+                    <select value={editForm.type} onChange={e => setEditForm(prev => ({ ...prev, type: e.target.value }))}
+                      className="w-full p-2 text-xs font-terminal"
+                      style={{ background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(196,169,90,0.2)', color: 'var(--cold-white)', borderRadius: '2px', outline: 'none' }}>
+                      {TYPE_OPTIONS.map(t => <option key={t} value={t}>{TYPE_LABELS[t]}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-xs font-terminal tracking-widest mb-1 block" style={{ color: 'var(--gold-dark)', fontSize: '0.55rem' }}>NÍVEL DE ACESSO</label>
+                    <select value={editForm.access_level} onChange={e => setEditForm(prev => ({ ...prev, access_level: e.target.value }))}
+                      className="w-full p-2 text-xs font-terminal"
+                      style={{ background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(196,169,90,0.2)', color: 'var(--cold-white)', borderRadius: '2px', outline: 'none' }}>
+                      {ACCESS_OPTIONS.map(a => <option key={a} value={a}>{a.toUpperCase().replace('_', ' ')}</option>)}
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <label className="text-xs font-terminal tracking-widest mb-1 block" style={{ color: 'var(--gold-dark)', fontSize: '0.55rem' }}>CONTEÚDO</label>
+                  <textarea value={editForm.content} onChange={e => setEditForm(prev => ({ ...prev, content: e.target.value }))}
+                    rows={4} className="w-full p-3 text-sm font-body resize-y"
+                    style={{ background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(196,169,90,0.2)', color: 'var(--cold-white)', borderRadius: '2px', outline: 'none' }} />
+                </div>
+                <div>
+                  <label className="text-xs font-terminal tracking-widest mb-1 block" style={{ color: 'var(--alert)', fontSize: '0.55rem' }}>PARTES CENSURADAS (conteúdo será bloqueado)</label>
+                  <textarea value={editForm.censored_parts} onChange={e => setEditForm(prev => ({ ...prev, censored_parts: e.target.value }))}
+                    rows={2} className="w-full p-2 text-xs font-body resize-none"
+                    style={{ background: 'rgba(74,10,10,0.15)', border: '1px solid rgba(204,0,0,0.2)', color: 'var(--cold-white)', borderRadius: '2px', outline: 'none' }} />
+                </div>
+                <div>
+                  <label className="text-xs font-terminal tracking-widest mb-1 block" style={{ color: 'var(--gold-dark)', fontSize: '0.55rem' }}>TAGS (separadas por vírgula)</label>
+                  <input value={editForm.tags} onChange={e => setEditForm(prev => ({ ...prev, tags: e.target.value }))}
+                    className="w-full p-2 text-xs font-body"
+                    style={{ background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(196,169,90,0.2)', color: 'var(--cold-white)', borderRadius: '2px', outline: 'none' }} />
+                </div>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => updateDoc.mutate({ id: selected.id, data: {
+                      title: editForm.title,
+                      type: editForm.type,
+                      content: editForm.content,
+                      censored_parts: editForm.censored_parts,
+                      access_level: editForm.access_level,
+                      is_corrupted: editForm.is_corrupted,
+                      tags: editForm.tags,
+                    } })}
+                    disabled={updateDoc.isPending || !editForm.title.trim()}
+                    className="btn-cencursa"
+                  >
+                    {updateDoc.isPending ? 'SALVANDO...' : 'SALVAR ALTERAÇÕES'}
+                  </button>
+                  <button onClick={() => setEditForm({
+                    title: selected.title || '',
+                    type: selected.type || 'report',
+                    content: selected.content || '',
+                    censored_parts: selected.censored_parts || '',
+                    access_level: selected.access_level || 'restricted',
+                    is_corrupted: selected.is_corrupted || false,
+                    tags: selected.tags || '',
+                    unlocked_for: selected.unlocked_for || [],
+                  })} className="btn-cencursa btn-danger">REDEFINIR</button>
+                </div>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => setEditForm(prev => ({ ...prev, is_corrupted: !prev.is_corrupted }))}
+                    className="btn-cencursa"
+                    style={{ borderColor: editForm.is_corrupted ? 'rgba(204,0,0,0.5)' : undefined, color: editForm.is_corrupted ? 'var(--alert)' : undefined }}
+                  >
+                    {editForm.is_corrupted ? '☣ CORROMPIDO' : '◇ CORROMPER DOCUMENTO'}
+                  </button>
+                </div>
+              </div>
+            </div>
+
             <div className="divider-gold" />
             <div className="text-xs font-terminal tracking-widest mb-3 mt-3" style={{ color: 'var(--gold-dark)', fontSize: '0.55rem' }}>
               SUJEITOS COM ACESSO

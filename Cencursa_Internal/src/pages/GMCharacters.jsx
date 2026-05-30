@@ -16,7 +16,7 @@ export default function GMCharacters() {
   const [tab, setTab] = useState('vitals');
   const [showNewChar, setShowNewChar] = useState(false);
   const [newChar, setNewChar] = useState({ name:'', player_email:'', player_name:'', occupation:'', nationality:'', hp:10, hp_max:10, sanity:100, sanity_max:100, souls:0, str:5, agi:5, res:5, int:5, per:5, pre:5, will:5 });
-  const [statusForm, setStatusForm] = useState({ type:'fear', description:'', duration:'', intensity:'mild' });
+  const [statusForm, setStatusForm] = useState({ type:'fear', description:'', duration:1, intensity:'mild' });
   const [itemForm, setItemForm] = useState({ name:'', category:'misc', rarity:'common', description:'', effects:'', origin:'' });
   const [powerForm, setPowerForm] = useState({ name:'', description:'', sanity_cost:0, psychological_effects:'', origin_trauma:'' });
 
@@ -282,13 +282,15 @@ export default function GMCharacters() {
                     </select>
                   </div>
                   <input
-                    placeholder="Duração (ex: 2 rodadas)"
+                    type="number"
+                    min="1"
+                    placeholder="Duração (em turnos)"
                     value={statusForm.duration}
-                    onChange={e => setStatusForm(f => ({ ...f, duration: e.target.value }))}
+                    onChange={e => setStatusForm(f => ({ ...f, duration: parseInt(e.target.value, 10) || 1 }))}
                     className="w-full bg-black/50 border border-gold/20 text-cold font-terminal text-xs p-2 rounded-sm focus:border-gold/50 outline-none mb-2"
                   />
                   <button
-                    onClick={() => createStatus.mutate({ ...statusForm, character_id: selected.id, label: STATUS_LABELS[statusForm.type] })}
+                    onClick={() => createStatus.mutate({ type: statusForm.type, description: statusForm.description, duration: statusForm.duration, intensity: statusForm.intensity, character_id: selected.id, is_active: true })}
                     className="btn-cencursa rounded-sm"
                   >
                     + APLICAR STATUS
